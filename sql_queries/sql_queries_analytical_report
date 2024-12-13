@@ -1,0 +1,72 @@
+1. Counts the number of sales transactions by gender.
+SELECT 
+    gender, 
+    COUNT(invoice_id) AS total_transactions
+FROM 
+    customer_data
+GROUP BY 
+    gender
+ORDER BY 
+    total_transactions DESC;
+	
+2. Counts the number of total no of sales for each product line.
+
+SELECT 
+    product_line, 
+    COUNT(invoice_id) AS total_sales
+FROM 
+    product_data
+GROUP BY 
+    product_line
+ORDER BY 
+    total_sales DESC;
+
+	
+3. Calculates the total sales amount for each city.
+
+SELECT 
+    city, 
+    SUM(gross_income) AS total_sales
+FROM 
+    sales_data s
+JOIN 
+    customer_data c ON s.invoice_id = c.invoice_id
+GROUP BY 
+    city
+ORDER BY 
+    total_sales DESC;
+	
+4. Calculates the cumulative total sales per city and ranks cities based on their total sales.
+
+WITH city_sales AS (
+    SELECT 
+        c.city, 
+        SUM(s.gross_income) AS total_sales
+    FROM 
+        sales_data s
+    JOIN 
+        customer_data c ON s.invoice_id = c.invoice_id
+    GROUP BY 
+        c.city
+)
+SELECT 
+    city, 
+    total_sales,
+    SUM(total_sales) OVER (ORDER BY total_sales DESC) AS cumulative_sales,
+    RANK() OVER (ORDER BY total_sales DESC) AS sales_rank
+FROM 
+    city_sales;
+
+
+5. Calculate total revenue for each date:
+
+SELECT 
+    date, 
+    SUM(gross_income) AS total_revenue
+FROM 
+    sales_data
+GROUP BY 
+    date
+ORDER BY 
+    date ASC;
+
